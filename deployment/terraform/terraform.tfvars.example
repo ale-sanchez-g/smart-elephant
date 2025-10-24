@@ -1,0 +1,32 @@
+# Example Terraform Variables Configuration
+# Copy this file to terraform.tfvars and update with your values
+
+aws_region  = "us-east-1"
+environment = "dev"
+
+# VPC Configuration
+vpc_cidr           = "10.0.0.0/16"
+availability_zones = ["us-east-1a", "us-east-1b"]
+
+# ECS Configuration
+knowledge_pipeline_image = "123456789012.dkr.ecr.us-east-1.amazonaws.com/knowledge-pipeline:latest"
+desired_count            = 2
+min_capacity             = 1
+max_capacity             = 10
+
+# ALB Configuration (optional, for HTTPS)
+# certificate_arn = "arn:aws:acm:us-east-1:123456789012:certificate/abc123"
+
+# Monitoring
+log_retention_days = 30
+alarm_email        = "alerts@example.com"
+
+# API Key (use environment variable or secrets manager instead)
+# api_key = "your-secure-api-key"
+
+# Additional Tags
+tags = {
+  Owner       = "DevOps Team"
+  CostCenter  = "Engineering"
+  Compliance  = "HIPAA"
+}
