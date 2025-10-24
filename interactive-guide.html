@@ -1,0 +1,1481 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Elephant - Interactive Guide</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+
+        header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px;
+            text-align: center;
+        }
+
+        header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+
+        .main-content {
+            padding: 40px;
+        }
+
+        .intro {
+            background: #f8f9fa;
+            padding: 30px;
+            border-radius: 10px;
+            margin-bottom: 40px;
+            border-left: 5px solid #667eea;
+        }
+
+        .intro h2 {
+            color: #667eea;
+            margin-bottom: 15px;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+            border-bottom: 2px solid #e0e0e0;
+            flex-wrap: wrap;
+        }
+
+        .tab-button {
+            background: none;
+            border: none;
+            padding: 15px 25px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            color: #666;
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s ease;
+        }
+
+        .tab-button:hover {
+            color: #667eea;
+            background: #f8f9fa;
+        }
+
+        .tab-button.active {
+            color: #667eea;
+            border-bottom-color: #667eea;
+        }
+
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.5s;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .workflow-selector {
+            background: #fff3cd;
+            padding: 25px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            border-left: 5px solid #ffc107;
+        }
+
+        .workflow-selector h3 {
+            margin-bottom: 15px;
+            color: #856404;
+        }
+
+        .workflow-buttons {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .workflow-btn {
+            padding: 15px 30px;
+            font-size: 16px;
+            font-weight: 600;
+            border: 2px solid #667eea;
+            background: white;
+            color: #667eea;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .workflow-btn:hover {
+            background: #667eea;
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .workflow-btn.selected {
+            background: #667eea;
+            color: white;
+        }
+
+        .interactive-demo {
+            background: #f8f9fa;
+            padding: 30px;
+            border-radius: 10px;
+            margin: 30px 0;
+        }
+
+        .step-container {
+            margin: 20px 0;
+        }
+
+        .step {
+            background: white;
+            padding: 20px;
+            margin: 15px 0;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .step:hover {
+            box-shadow: 0 5px 15px rgba(0,0,0,0.15);
+            transform: translateX(5px);
+        }
+
+        .step-number {
+            display: inline-block;
+            width: 30px;
+            height: 30px;
+            background: #667eea;
+            color: white;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 30px;
+            font-weight: bold;
+            margin-right: 15px;
+        }
+
+        .step-title {
+            font-size: 1.2em;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .step-details {
+            display: none;
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid #e0e0e0;
+        }
+
+        .step.expanded .step-details {
+            display: block;
+        }
+
+        .code-example {
+            background: #282c34;
+            color: #abb2bf;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 15px 0;
+            overflow-x: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        .code-example .keyword {
+            color: #c678dd;
+        }
+
+        .code-example .string {
+            color: #98c379;
+        }
+
+        .code-example .comment {
+            color: #5c6370;
+            font-style: italic;
+        }
+
+        .chatmode-card {
+            background: white;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 15px 0;
+            transition: all 0.3s ease;
+        }
+
+        .chatmode-card:hover {
+            border-color: #667eea;
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.2);
+        }
+
+        .chatmode-card h4 {
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 5px 15px;
+            background: #667eea;
+            color: white;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-right: 10px;
+            margin-bottom: 10px;
+        }
+
+        .badge.setup { background: #28a745; }
+        .badge.inception { background: #17a2b8; }
+        .badge.construction { background: #ffc107; color: #333; }
+
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .comparison-table th {
+            background: #667eea;
+            color: white;
+            padding: 15px;
+            text-align: left;
+        }
+
+        .comparison-table td {
+            padding: 15px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .comparison-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .comparison-table tr:nth-child(even) {
+            background: #f8f9fa;
+        }
+
+        .alert {
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+
+        .alert-info {
+            background: #d1ecf1;
+            border-left: 4px solid #17a2b8;
+            color: #0c5460;
+        }
+
+        .alert-success {
+            background: #d4edda;
+            border-left: 4px solid #28a745;
+            color: #155724;
+        }
+
+        .alert-warning {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            color: #856404;
+        }
+
+        button.action-btn {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 6px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin: 10px 5px;
+        }
+
+        button.action-btn:hover {
+            background: #5568d3;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .example-output {
+            background: #e8f5e9;
+            padding: 20px;
+            border-radius: 8px;
+            border-left: 4px solid #28a745;
+            margin: 15px 0;
+        }
+
+        footer {
+            background: #2c3e50;
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        footer a {
+            color: #667eea;
+            text-decoration: none;
+        }
+
+        footer a:hover {
+            text-decoration: underline;
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                padding: 20px;
+            }
+
+            header h1 {
+                font-size: 2em;
+            }
+
+            .tabs {
+                flex-direction: column;
+            }
+
+            .tab-button {
+                width: 100%;
+                text-align: left;
+            }
+
+            .workflow-buttons {
+                flex-direction: column;
+            }
+
+            .workflow-btn {
+                width: 100%;
+            }
+        }
+
+        .tooltip {
+            position: relative;
+            display: inline-block;
+            cursor: help;
+            border-bottom: 1px dotted #667eea;
+            color: #667eea;
+        }
+
+        .tooltip .tooltiptext {
+            visibility: hidden;
+            width: 200px;
+            background-color: #555;
+            color: #fff;
+            text-align: center;
+            border-radius: 6px;
+            padding: 10px;
+            position: absolute;
+            z-index: 1;
+            bottom: 125%;
+            left: 50%;
+            margin-left: -100px;
+            opacity: 0;
+            transition: opacity 0.3s;
+            font-size: 14px;
+        }
+
+        .tooltip:hover .tooltiptext {
+            visibility: visible;
+            opacity: 1;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 30px;
+            background: #e0e0e0;
+            border-radius: 15px;
+            overflow: hidden;
+            margin: 20px 0;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            width: 0%;
+            transition: width 0.5s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🐘 Smart Elephant</h1>
+            <p>Interactive Guide to AI-Powered Development Workflow</p>
+        </header>
+
+        <div class="main-content">
+            <div class="intro">
+                <h2>Welcome! 👋</h2>
+                <p>
+                    Smart Elephant is a repository that uses an <strong>approval-first AI delivery workflow</strong> 
+                    to keep your work auditable, reviewable, and reproducible. This interactive guide will help you 
+                    understand how to use it, even if you're not a technical person!
+                </p>
+            </div>
+
+            <div class="tabs">
+                <button class="tab-button active" onclick="showTab('overview')">📚 Overview</button>
+                <button class="tab-button" onclick="showTab('workflow')">🔄 Choose Your Workflow</button>
+                <button class="tab-button" onclick="showTab('chatmodes')">💬 Chat Modes</button>
+                <button class="tab-button" onclick="showTab('comparison')">⚖️ Greenfield vs Brownfield</button>
+                <button class="tab-button" onclick="showTab('examples')">✨ Examples</button>
+            </div>
+
+            <!-- Overview Tab -->
+            <div id="overview" class="tab-content active">
+                <h2>What is Smart Elephant?</h2>
+                <p>
+                    Smart Elephant is a system that helps teams build software with AI assistance while maintaining 
+                    quality and control. Think of it as having an AI assistant that needs your approval before 
+                    making changes.
+                </p>
+
+                <h3 style="margin-top: 30px;">🔑 Key Principles</h3>
+                <div class="step-container">
+                    <div class="step" onclick="toggleStep(this)">
+                        <div>
+                            <span class="step-number">1</span>
+                            <span class="step-title">Plan Before Work</span>
+                        </div>
+                        <div class="step-details">
+                            <p>Every significant change starts with a plan. The AI creates a plan document that describes what it will do, and a human must approve it before any work begins.</p>
+                            <div class="example-output">
+                                <strong>Example:</strong> Before adding a new feature, the AI writes a plan explaining the scope, deliverables, and timeline. You review and approve it.
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="step" onclick="toggleStep(this)">
+                        <div>
+                            <span class="step-number">2</span>
+                            <span class="step-title">Everything is Auditable</span>
+                        </div>
+                        <div class="step-details">
+                            <p>Every prompt (instruction) given to the AI and every file it generates is logged. This creates a complete history of who did what and why.</p>
+                            <div class="code-example">
+<span class="comment">## Example log entry in prompts.md:</span>
+<span class="keyword">Date:</span> <span class="string">2025-10-24</span>
+<span class="keyword">Prompt:</span> <span class="string">"Create user authentication system"</span>
+<span class="keyword">Files Generated:</span>
+  - <span class="string">auth/login.js</span>
+  - <span class="string">auth/register.js</span>
+  - <span class="string">auth/middleware.js</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="step" onclick="toggleStep(this)">
+                        <div>
+                            <span class="step-number">3</span>
+                            <span class="step-title">Small, Testable Changes</span>
+                        </div>
+                        <div class="step-details">
+                            <p>Changes are broken into small pieces that can be tested independently. This makes it easier to find and fix problems.</p>
+                            <div class="alert alert-info">
+                                <strong>💡 Tip:</strong> Instead of one huge change, make several small changes. Each one should do something specific and testable.
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="step" onclick="toggleStep(this)">
+                        <div>
+                            <span class="step-number">4</span>
+                            <span class="step-title">Specialized Chat Modes</span>
+                        </div>
+                        <div class="step-details">
+                            <p>Different phases of development use different "chat modes" - specialized AI assistants that know exactly what to do in each phase.</p>
+                            <div class="example-output">
+                                <strong>Phases:</strong>
+                                <ul style="margin-top: 10px;">
+                                    <li><strong>Setup:</strong> Initialize your project</li>
+                                    <li><strong>Inception:</strong> Create user stories and architecture</li>
+                                    <li><strong>Construction:</strong> Build the actual code and infrastructure</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Workflow Tab -->
+            <div id="workflow" class="tab-content">
+                <h2>Choose Your Development Path</h2>
+                
+                <div class="workflow-selector">
+                    <h3>What type of project are you working on?</h3>
+                    <p>Select one to see a customized workflow:</p>
+                    <div class="workflow-buttons">
+                        <button class="workflow-btn" onclick="selectWorkflow('greenfield')">
+                            🌱 Greenfield<br>
+                            <small>Starting from scratch</small>
+                        </button>
+                        <button class="workflow-btn" onclick="selectWorkflow('brownfield')">
+                            🏗️ Brownfield<br>
+                            <small>Enhancing existing code</small>
+                        </button>
+                    </div>
+                </div>
+
+                <div id="greenfield-workflow" class="interactive-demo" style="display: none;">
+                    <h3>🌱 Greenfield Project Workflow</h3>
+                    <p>Building a new project from the ground up? Follow these steps:</p>
+                    
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="greenfield-progress">0%</div>
+                    </div>
+
+                    <div class="step-container">
+                        <div class="step" onclick="toggleStep(this); updateProgress('greenfield', 1)">
+                            <div>
+                                <span class="step-number">1</span>
+                                <span class="step-title">Initialize Workflow (Setup Phase)</span>
+                            </div>
+                            <div class="step-details">
+                                <p><strong>Chat Mode:</strong> <code>1. setup.chatmode.md</code></p>
+                                <p>Set up the repository structure and AI delivery workflow.</p>
+                                <div class="code-example">
+<span class="comment">// What you'll get:</span>
+- aidlc-docs/
+  - README.md
+  - plans/
+    - initial-plan.md
+  - prompts.md
+                                </div>
+                                <button class="action-btn" onclick="alert('This step creates your project structure!')">✅ Complete Step 1</button>
+                            </div>
+                        </div>
+
+                        <div class="step" onclick="toggleStep(this); updateProgress('greenfield', 2)">
+                            <div>
+                                <span class="step-number">2</span>
+                                <span class="step-title">Create User Stories (Inception Phase)</span>
+                            </div>
+                            <div class="step-details">
+                                <p><strong>Chat Mode:</strong> <code>2.1 inception.stories.chatmode.md</code></p>
+                                <p>Generate user stories from your product requirements.</p>
+                                <div class="example-output">
+                                    <strong>Input:</strong> "I want to build a task management app"<br>
+                                    <strong>Output:</strong> User stories with acceptance criteria
+                                </div>
+                                <div class="alert alert-warning">
+                                    <strong>⚠️ Approval Gate:</strong> Review and approve user stories before proceeding!
+                                </div>
+                                <button class="action-btn" onclick="alert('Stories created! Now get approval.')">✅ Complete Step 2</button>
+                            </div>
+                        </div>
+
+                        <div class="step" onclick="toggleStep(this); updateProgress('greenfield', 3)">
+                            <div>
+                                <span class="step-number">3</span>
+                                <span class="step-title">Domain Modeling (Construction Phase)</span>
+                            </div>
+                            <div class="step-details">
+                                <p><strong>Chat Mode:</strong> <code>3.1 construction.domain.chatmode.md</code></p>
+                                <p>Create component models for your system.</p>
+                                <div class="code-example">
+<span class="comment">// Example output:</span>
+design/
+  - task_component_model.md
+  - user_component_model.md
+  - notification_component_model.md
+                                </div>
+                                <div class="alert alert-warning">
+                                    <strong>⚠️ Approval Gate:</strong> Review domain model before implementation!
+                                </div>
+                                <button class="action-btn" onclick="alert('Domain models created!')">✅ Complete Step 3</button>
+                            </div>
+                        </div>
+
+                        <div class="step" onclick="toggleStep(this); updateProgress('greenfield', 4)">
+                            <div>
+                                <span class="step-number">4</span>
+                                <span class="step-title">Architecture Design (Inception Phase)</span>
+                            </div>
+                            <div class="step-details">
+                                <p><strong>Chat Mode:</strong> <code>2.3 inception.architecture.chatmode.md</code></p>
+                                <p>Define deployment architecture and cloud resources.</p>
+                                <div class="example-output">
+                                    <strong>Output files:</strong>
+                                    <ul>
+                                        <li>design/auth_unit.md</li>
+                                        <li>design/api_gateway_unit.md</li>
+                                        <li>design/database_unit.md</li>
+                                    </ul>
+                                </div>
+                                <div class="alert alert-warning">
+                                    <strong>⚠️ Approval Gate:</strong> Review architecture decisions!
+                                </div>
+                                <button class="action-btn" onclick="alert('Architecture designed!')">✅ Complete Step 4</button>
+                            </div>
+                        </div>
+
+                        <div class="step" onclick="toggleStep(this); updateProgress('greenfield', 5)">
+                            <div>
+                                <span class="step-number">5</span>
+                                <span class="step-title">Implement Software Units (Inception Phase)</span>
+                            </div>
+                            <div class="step-details">
+                                <p><strong>Chat Mode:</strong> <code>2.2 inception.units.chatmode.md</code></p>
+                                <p>Generate implementation code from design specifications.</p>
+                                <div class="code-example">
+<span class="comment">// Generated files:</span>
+BACKEND/
+  - services/
+    - taskService.js
+    - userService.js
+  - models/
+    - Task.js
+    - User.js
+                                </div>
+                                <button class="action-btn" onclick="alert('Code implemented!')">✅ Complete Step 5</button>
+                            </div>
+                        </div>
+
+                        <div class="step" onclick="toggleStep(this); updateProgress('greenfield', 6)">
+                            <div>
+                                <span class="step-number">6</span>
+                                <span class="step-title">Build REST APIs (Construction Phase)</span>
+                            </div>
+                            <div class="step-details">
+                                <p><strong>Chat Mode:</strong> <code>3.3 construction.build.chatmode.md</code></p>
+                                <p>Create API layer with routes and controllers.</p>
+                                <div class="example-output">
+                                    <strong>Generated:</strong>
+                                    <ul>
+                                        <li>api/routes/ - API endpoints</li>
+                                        <li>api/controllers/ - Business logic</li>
+                                        <li>OpenAPI specifications</li>
+                                    </ul>
+                                </div>
+                                <button class="action-btn" onclick="alert('APIs created!')">✅ Complete Step 6</button>
+                            </div>
+                        </div>
+
+                        <div class="step" onclick="toggleStep(this); updateProgress('greenfield', 7)">
+                            <div>
+                                <span class="step-number">7</span>
+                                <span class="step-title">Generate Deployment Code (Construction Phase)</span>
+                            </div>
+                            <div class="step-details">
+                                <p><strong>Chat Mode:</strong> <code>3.2 construction.code.chatmode.md</code></p>
+                                <p>Create Infrastructure as Code and deployment scripts.</p>
+                                <div class="code-example">
+<span class="comment">// Deployment files:</span>
+DEPLOYMENT/
+  - terraform/
+    - main.tf
+    - variables.tf
+  - scripts/
+    - deploy.sh
+  - runbooks/
+                                </div>
+                                <div class="alert alert-success">
+                                    <strong>🎉 Congratulations!</strong> Your greenfield project is ready to deploy!
+                                </div>
+                                <button class="action-btn" onclick="alert('Ready to deploy!')">✅ Complete Step 7</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="brownfield-workflow" class="interactive-demo" style="display: none;">
+                    <h3>🏗️ Brownfield Project Workflow</h3>
+                    <p>Enhancing an existing project? Follow these steps:</p>
+                    
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="brownfield-progress">0%</div>
+                    </div>
+
+                    <div class="step-container">
+                        <div class="step" onclick="toggleStep(this); updateProgress('brownfield', 1)">
+                            <div>
+                                <span class="step-number">1</span>
+                                <span class="step-title">Analyze Existing Codebase</span>
+                            </div>
+                            <div class="step-details">
+                                <p>Review current implementation and identify areas for enhancement.</p>
+                                <div class="example-output">
+                                    <strong>What to look for:</strong>
+                                    <ul>
+                                        <li>✅ Current features and functionality</li>
+                                        <li>✅ Code structure and patterns</li>
+                                        <li>✅ Dependencies and integrations</li>
+                                        <li>✅ Areas that need improvement</li>
+                                    </ul>
+                                </div>
+                                <button class="action-btn" onclick="alert('Analysis complete!')">✅ Complete Step 1</button>
+                            </div>
+                        </div>
+
+                        <div class="step" onclick="toggleStep(this); updateProgress('brownfield', 2)">
+                            <div>
+                                <span class="step-number">2</span>
+                                <span class="step-title">Create Enhancement User Stories</span>
+                            </div>
+                            <div class="step-details">
+                                <p><strong>Chat Mode:</strong> <code>2.1 inception.stories.chatmode.md</code></p>
+                                <p>Generate stories for new features while considering existing functionality.</p>
+                                <div class="alert alert-warning">
+                                    <strong>⚠️ Important:</strong> Validate stories don't conflict with existing functionality!
+                                </div>
+                                <button class="action-btn" onclick="alert('Enhancement stories created!')">✅ Complete Step 2</button>
+                            </div>
+                        </div>
+
+                        <div class="step" onclick="toggleStep(this); updateProgress('brownfield', 3)">
+                            <div>
+                                <span class="step-number">3</span>
+                                <span class="step-title">Update Domain Models</span>
+                            </div>
+                            <div class="step-details">
+                                <p><strong>Chat Mode:</strong> <code>3.1 construction.domain.chatmode.md</code></p>
+                                <p>Extend existing models with new components.</p>
+                                <div class="code-example">
+<span class="comment">// Input: User stories + existing models</span>
+<span class="comment">// Output: Updated component models showing:</span>
+  - <span class="string">New components</span>
+  - <span class="string">Changed components</span>
+  - <span class="string">Integration points</span>
+                                </div>
+                                <div class="alert alert-warning">
+                                    <strong>⚠️ Approval Gate:</strong> Review impact on existing system boundaries!
+                                </div>
+                                <button class="action-btn" onclick="alert('Models updated!')">✅ Complete Step 3</button>
+                            </div>
+                        </div>
+
+                        <div class="step" onclick="toggleStep(this); updateProgress('brownfield', 4)">
+                            <div>
+                                <span class="step-number">4</span>
+                                <span class="step-title">Architecture Evolution</span>
+                            </div>
+                            <div class="step-details">
+                                <p><strong>Chat Mode:</strong> <code>2.3 inception.architecture.chatmode.md</code></p>
+                                <p>Plan infrastructure changes with migration strategy.</p>
+                                <div class="example-output">
+                                    <strong>Includes:</strong>
+                                    <ul>
+                                        <li>Architecture evolution plan</li>
+                                        <li>Migration strategy</li>
+                                        <li>Rollback procedures</li>
+                                        <li>Risk assessment</li>
+                                    </ul>
+                                </div>
+                                <button class="action-btn" onclick="alert('Architecture plan ready!')">✅ Complete Step 4</button>
+                            </div>
+                        </div>
+
+                        <div class="step" onclick="toggleStep(this); updateProgress('brownfield', 5)">
+                            <div>
+                                <span class="step-number">5</span>
+                                <span class="step-title">Implement New Units</span>
+                            </div>
+                            <div class="step-details">
+                                <p><strong>Chat Mode:</strong> <code>2.2 inception.units.chatmode.md</code></p>
+                                <p>Generate new components with integration adapters.</p>
+                                <div class="alert alert-info">
+                                    <strong>💡 Key Focus:</strong> Ensure backward compatibility with existing code!
+                                </div>
+                                <button class="action-btn" onclick="alert('New units implemented!')">✅ Complete Step 5</button>
+                            </div>
+                        </div>
+
+                        <div class="step" onclick="toggleStep(this); updateProgress('brownfield', 6)">
+                            <div>
+                                <span class="step-number">6</span>
+                                <span class="step-title">Extend or Refactor APIs</span>
+                            </div>
+                            <div class="step-details">
+                                <p><strong>Chat Mode:</strong> <code>3.3 construction.build.chatmode.md</code></p>
+                                <p>Update API layer with versioning strategy.</p>
+                                <div class="code-example">
+<span class="comment">// Outputs:</span>
+- api/v2/routes/         <span class="comment">// New version</span>
+- api/v1/routes/         <span class="comment">// Legacy (maintained)</span>
+- migration-guide.md     <span class="comment">// For API consumers</span>
+                                </div>
+                                <button class="action-btn" onclick="alert('APIs updated!')">✅ Complete Step 6</button>
+                            </div>
+                        </div>
+
+                        <div class="step" onclick="toggleStep(this); updateProgress('brownfield', 7)">
+                            <div>
+                                <span class="step-number">7</span>
+                                <span class="step-title">Update Deployment</span>
+                            </div>
+                            <div class="step-details">
+                                <p><strong>Chat Mode:</strong> <code>3.2 construction.code.chatmode.md</code></p>
+                                <p>Update Infrastructure as Code with blue-green deployment.</p>
+                                <div class="alert alert-success">
+                                    <strong>✅ Includes:</strong>
+                                    <ul>
+                                        <li>Updated IaC files</li>
+                                        <li>Blue-green deployment strategy</li>
+                                        <li>Rollback plan</li>
+                                        <li>Testing procedures</li>
+                                    </ul>
+                                </div>
+                                <button class="action-btn" onclick="alert('Ready to deploy with rollback plan!')">✅ Complete Step 7</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Chat Modes Tab -->
+            <div id="chatmodes" class="tab-content">
+                <h2>💬 Understanding Chat Modes</h2>
+                <p>Chat modes are specialized AI assistants for different phases of development. Think of them as experts in specific tasks.</p>
+
+                <h3 style="margin-top: 30px;">Setup Phase</h3>
+                <div class="chatmode-card">
+                    <span class="badge setup">Setup</span>
+                    <h4>1. Setup Chat Mode</h4>
+                    <p>Initializes the AI delivery workflow and repository structure. Use this first when starting any project.</p>
+                    <div class="example-output">
+                        <strong>Creates:</strong> Project folders, documentation templates, and workflow files
+                    </div>
+                </div>
+
+                <h3 style="margin-top: 30px;">Inception Phase</h3>
+                <div class="chatmode-card">
+                    <span class="badge inception">Inception</span>
+                    <h4>2.1 Inception - Stories</h4>
+                    <p>Generates user stories from product requirements. Helps translate ideas into actionable development tasks.</p>
+                    <div class="code-example">
+<span class="comment">// Example usage:</span>
+<span class="keyword">Input:</span> <span class="string">"Build an online bookstore"</span>
+
+<span class="keyword">Output:</span>
+- User Story: Browse books by category
+- User Story: Add books to shopping cart
+- User Story: Checkout and payment
+- User Story: Order history
+                    </div>
+                </div>
+
+                <div class="chatmode-card">
+                    <span class="badge inception">Inception</span>
+                    <h4>2.2 Inception - Units</h4>
+                    <p>Implements software units from component designs. Turns design documents into actual code.</p>
+                    <div class="example-output">
+                        <strong>Input:</strong> Component design specification<br>
+                        <strong>Output:</strong> Implementation files (services, models, utilities)
+                    </div>
+                </div>
+
+                <div class="chatmode-card">
+                    <span class="badge inception">Inception</span>
+                    <h4>2.3 Inception - Architecture</h4>
+                    <p>Designs architecture and deployment planning. Decides how different parts of the system work together.</p>
+                    <div class="example-output">
+                        <strong>Creates:</strong> Architecture diagrams, deployment plans, cloud resource specifications
+                    </div>
+                </div>
+
+                <h3 style="margin-top: 30px;">Construction Phase</h3>
+                <div class="chatmode-card">
+                    <span class="badge construction">Construction</span>
+                    <h4>3.1 Construction - Domain</h4>
+                    <p>Domain-driven component model design. Creates the "blueprint" of your system's components.</p>
+                    <div class="alert alert-info">
+                        <strong>💡 What's a component model?</strong> It's like a map showing all the pieces of your system and how they connect.
+                    </div>
+                </div>
+
+                <div class="chatmode-card">
+                    <span class="badge construction">Construction</span>
+                    <h4>3.2 Construction - Code</h4>
+                    <p>Code generation and deployment automation. Creates the infrastructure code needed to deploy your application.</p>
+                    <div class="example-output">
+                        <strong>Generates:</strong> Terraform files, deployment scripts, configuration files
+                    </div>
+                </div>
+
+                <div class="chatmode-card">
+                    <span class="badge construction">Construction</span>
+                    <h4>3.3 Construction - Build</h4>
+                    <p>Builds REST APIs and Infrastructure as Code. Creates the actual API endpoints your application will use.</p>
+                    <div class="code-example">
+<span class="comment">// Example API generated:</span>
+GET    /api/books           <span class="comment">// List all books</span>
+POST   /api/books           <span class="comment">// Create new book</span>
+GET    /api/books/:id       <span class="comment">// Get specific book</span>
+PUT    /api/books/:id       <span class="comment">// Update book</span>
+DELETE /api/books/:id       <span class="comment">// Delete book</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Comparison Tab -->
+            <div id="comparison" class="tab-content">
+                <h2>⚖️ Greenfield vs Brownfield: What's the Difference?</h2>
+                
+                <div class="alert alert-info">
+                    <strong>🤔 Quick Answer:</strong><br>
+                    <strong>Greenfield</strong> = Starting a brand new project from scratch<br>
+                    <strong>Brownfield</strong> = Adding to or modifying an existing project
+                </div>
+
+                <table class="comparison-table">
+                    <thead>
+                        <tr>
+                            <th>Aspect</th>
+                            <th>🌱 Greenfield</th>
+                            <th>🏗️ Brownfield</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Starting Point</strong></td>
+                            <td>Product vision or idea</td>
+                            <td>Existing codebase</td>
+                        </tr>
+                        <tr>
+                            <td><strong>User Stories</strong></td>
+                            <td>Full system scope</td>
+                            <td>Feature enhancements only</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Domain Modeling</strong></td>
+                            <td>Create everything from scratch</td>
+                            <td>Extend existing models</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Architecture</strong></td>
+                            <td>Design entire system</td>
+                            <td>Evolve existing architecture</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Implementation</strong></td>
+                            <td>Generate all code</td>
+                            <td>Integrate with existing code</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Deployment</strong></td>
+                            <td>Provision all resources</td>
+                            <td>Update existing infrastructure</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Main Risk</strong></td>
+                            <td>Technical feasibility</td>
+                            <td>Backward compatibility</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Approval Focus</strong></td>
+                            <td>Architectural patterns</td>
+                            <td>Migration strategy and rollback</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h3 style="margin-top: 40px;">📖 Real-World Examples</h3>
+                
+                <div class="step-container">
+                    <div class="step" onclick="toggleStep(this)">
+                        <div>
+                            <span style="font-size: 2em; margin-right: 15px;">🌱</span>
+                            <span class="step-title">Greenfield Example: New E-Commerce Platform</span>
+                        </div>
+                        <div class="step-details">
+                            <p><strong>Scenario:</strong> You want to build a brand new online store from scratch.</p>
+                            <div class="example-output">
+                                <strong>Process:</strong>
+                                <ol style="margin-top: 10px; margin-left: 20px;">
+                                    <li>Start with product vision: "Online bookstore with recommendations"</li>
+                                    <li>Generate user stories: browsing, cart, checkout, reviews</li>
+                                    <li>Design system architecture: web frontend, API backend, database</li>
+                                    <li>Create all components: user service, product service, order service</li>
+                                    <li>Build APIs: /products, /cart, /orders, /reviews</li>
+                                    <li>Generate deployment: cloud infrastructure, database, storage</li>
+                                    <li>Deploy everything as a complete new system</li>
+                                </ol>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="step" onclick="toggleStep(this)">
+                        <div>
+                            <span style="font-size: 2em; margin-right: 15px;">🏗️</span>
+                            <span class="step-title">Brownfield Example: Add AI Search to Existing Store</span>
+                        </div>
+                        <div class="step-details">
+                            <p><strong>Scenario:</strong> You have an existing bookstore, and you want to add AI-powered search.</p>
+                            <div class="example-output">
+                                <strong>Process:</strong>
+                                <ol style="margin-top: 10px; margin-left: 20px;">
+                                    <li>Analyze existing search implementation</li>
+                                    <li>Create enhancement stories: "As a user, I want smart search suggestions"</li>
+                                    <li>Update domain models to include AI search component</li>
+                                    <li>Design integration with existing search</li>
+                                    <li>Implement AI search service alongside old search</li>
+                                    <li>Create new API endpoint: /api/v2/ai-search</li>
+                                    <li>Keep old endpoint: /api/v1/search (for compatibility)</li>
+                                    <li>Update infrastructure to add ML model hosting</li>
+                                    <li>Deploy with blue-green strategy (can rollback if issues)</li>
+                                </ol>
+                            </div>
+                            <div class="alert alert-warning">
+                                <strong>⚠️ Key Difference:</strong> Must ensure old functionality keeps working while adding new features!
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Examples Tab -->
+            <div id="examples" class="tab-content">
+                <h2>✨ Interactive Examples</h2>
+                <p>Click on each example to explore real-world scenarios:</p>
+
+                <div class="step-container">
+                    <div class="step" onclick="toggleStep(this)">
+                        <div>
+                            <span style="font-size: 2em; margin-right: 15px;">📱</span>
+                            <span class="step-title">Example 1: Task Management App (Greenfield)</span>
+                        </div>
+                        <div class="step-details">
+                            <h4>Project Description</h4>
+                            <p>Build a task management application from scratch where users can create, organize, and track tasks.</p>
+                            
+                            <h4>Step-by-Step Process</h4>
+                            <div class="code-example">
+<span class="comment">// Step 1: User Stories Generated</span>
+✅ As a user, I want to create tasks with title and description
+✅ As a user, I want to organize tasks into projects
+✅ As a user, I want to set due dates and priorities
+✅ As a user, I want to mark tasks as complete
+✅ As a user, I want to receive notifications for overdue tasks
+
+<span class="comment">// Step 2: Component Models</span>
+- Task Component (CRUD operations)
+- Project Component (task organization)
+- User Component (authentication)
+- Notification Component (alerts)
+
+<span class="comment">// Step 3: Architecture</span>
+Frontend: React web app
+Backend: Node.js REST API
+Database: PostgreSQL
+Hosting: AWS (ECS + RDS)
+
+<span class="comment">// Step 4: Generated Files</span>
+BACKEND/
+  - services/taskService.js
+  - services/projectService.js
+  - models/Task.js
+  - models/Project.js
+api/
+  - routes/tasks.js
+  - routes/projects.js
+DEPLOYMENT/
+  - terraform/main.tf
+  - docker-compose.yml
+                            </div>
+                            <button class="action-btn" onclick="alert('This would create a complete task management app!')">🚀 Launch Example</button>
+                        </div>
+                    </div>
+
+                    <div class="step" onclick="toggleStep(this)">
+                        <div>
+                            <span style="font-size: 2em; margin-right: 15px;">🔍</span>
+                            <span class="step-title">Example 2: Add Real-time Collaboration (Brownfield)</span>
+                        </div>
+                        <div class="step-details">
+                            <h4>Enhancement Description</h4>
+                            <p>Add real-time collaboration to an existing task management app so multiple users can see updates instantly.</p>
+                            
+                            <h4>Step-by-Step Process</h4>
+                            <div class="code-example">
+<span class="comment">// Step 1: Analyze Existing Code</span>
+✅ Current: REST API with polling every 30 seconds
+✅ Problem: Delayed updates, high server load
+✅ Solution: Add WebSocket support
+
+<span class="comment">// Step 2: Enhancement User Stories</span>
+✅ As a user, I want to see task updates in real-time
+✅ As a user, I want to see who else is viewing a task
+✅ As a user, I want to see live cursor positions
+
+<span class="comment">// Step 3: Updated Domain Models</span>
++ CollaborationComponent (WebSocket management)
++ PresenceComponent (user status tracking)
+~ TaskComponent (add real-time events)
+
+<span class="comment">// Step 4: Architecture Evolution</span>
+Add: Redis for pub/sub
+Add: WebSocket server (Socket.io)
+Keep: Existing REST API (backward compatible)
+
+<span class="comment">// Step 5: Generated Files (NEW)</span>
+BACKEND/
+  + services/collaborationService.js
+  + services/presenceService.js
+  ~ services/taskService.js (extended)
+api/
+  + websocket/taskEvents.js
+  + websocket/presenceEvents.js
+  ~ routes/tasks.js (added WebSocket endpoints)
+
+<span class="comment">// Step 6: Deployment Update</span>
+DEPLOYMENT/
+  ~ terraform/main.tf (add Redis, WebSocket server)
+  + blue-green-deploy.sh
+  + rollback-plan.md
+                            </div>
+                            <div class="alert alert-success">
+                                <strong>✅ Result:</strong> Real-time collaboration added without breaking existing functionality. Old clients still work with REST API!
+                            </div>
+                            <button class="action-btn" onclick="alert('This shows how to safely add new features!')">🚀 Launch Example</button>
+                        </div>
+                    </div>
+
+                    <div class="step" onclick="toggleStep(this)">
+                        <div>
+                            <span style="font-size: 2em; margin-right: 15px;">📊</span>
+                            <span class="step-title">Example 3: The Approval Workflow</span>
+                        </div>
+                        <div class="step-details">
+                            <h4>How the Approval Process Works</h4>
+                            <p>This example shows the complete approval workflow for adding a new feature.</p>
+                            
+                            <div class="example-output">
+                                <h4>Scenario: Add "Task Comments" Feature</h4>
+                                
+                                <strong>📝 Step 1: Create Plan (AI)</strong>
+                                <div class="code-example" style="margin: 10px 0;">
+<span class="comment">// File: aidlc-docs/plans/task-comments-feature.md</span>
+---
+<span class="keyword">title:</span> Add Task Comments Feature
+<span class="keyword">status:</span> <span class="string">Draft</span>
+<span class="keyword">owner:</span> <span class="string">AI Assistant</span>
+<span class="keyword">reviewers:</span> <span class="string">[@john, @sarah]</span>
+---
+
+<span class="keyword">Scope:</span>
+- Add comment system to tasks
+- Users can add, edit, delete comments
+- Comments show timestamp and author
+
+<span class="keyword">Deliverables:</span>
+- Comment model and service
+- API endpoints for comments
+- Database migration
+
+<span class="keyword">Timeline:</span> 2 days
+                                </div>
+
+                                <strong>👀 Step 2: Human Review</strong>
+                                <p style="margin: 10px 0;">Sarah reviews the plan and suggests adding email notifications for new comments.</p>
+
+                                <strong>🔄 Step 3: Update Plan (AI)</strong>
+                                <div class="code-example" style="margin: 10px 0;">
+<span class="comment">// Updated plan includes:</span>
++ Email notification service
++ Email templates for new comments
+                                </div>
+
+                                <strong>✅ Step 4: Approval (Human)</strong>
+                                <div class="code-example" style="margin: 10px 0;">
+<span class="keyword">status:</span> <span class="string">Draft</span> → <span class="string">Approved</span>
+<span class="comment">// Sarah changes status to "Approved"</span>
+                                </div>
+
+                                <strong>🚀 Step 5: Implementation (AI)</strong>
+                                <p style="margin: 10px 0;">AI proceeds to implement the approved plan, creating all necessary files.</p>
+
+                                <strong>📋 Step 6: Log Prompt</strong>
+                                <div class="code-example" style="margin: 10px 0;">
+<span class="comment">// File: aidlc-docs/prompts.md (automatically updated)</span>
+<span class="keyword">## 2025-10-24 - Task Comments Feature</span>
+<span class="keyword">Prompt:</span> Implement task comments with email notifications
+<span class="keyword">Plan:</span> task-comments-feature.md
+<span class="keyword">Files Generated:</span>
+  - models/Comment.js
+  - services/commentService.js
+  - api/routes/comments.js
+  - services/emailService.js
+                                </div>
+
+                                <strong>🔍 Step 7: Pull Request (Human + AI)</strong>
+                                <p style="margin: 10px 0;">AI creates PR, humans review code, tests pass, and PR is merged.</p>
+                            </div>
+
+                            <div class="alert alert-success">
+                                <strong>🎯 Key Takeaway:</strong> Nothing happens without human approval! AI proposes, humans decide.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <h3 style="margin-top: 40px;">🎮 Try It Yourself</h3>
+                <div class="interactive-demo">
+                    <h4>Simulate a Project Workflow</h4>
+                    <p>Select a scenario and see how Smart Elephant would handle it:</p>
+                    
+                    <select id="scenario-selector" style="width: 100%; padding: 15px; font-size: 16px; border: 2px solid #667eea; border-radius: 8px; margin: 15px 0;">
+                        <option value="">Choose a scenario...</option>
+                        <option value="blog">Build a new blog platform</option>
+                        <option value="ecommerce">Build an e-commerce store</option>
+                        <option value="dashboard">Build an analytics dashboard</option>
+                        <option value="chat">Add chat feature to existing app</option>
+                        <option value="search">Add search to existing app</option>
+                    </select>
+
+                    <button class="action-btn" onclick="simulateScenario()">🎬 Simulate Workflow</button>
+
+                    <div id="simulation-output" style="margin-top: 20px;"></div>
+                </div>
+            </div>
+        </div>
+
+        <footer>
+            <h3>Ready to Get Started?</h3>
+            <p style="margin: 15px 0;">
+                Visit the repository: <a href="https://github.com/ale-sanchez-g/smart-elephant" target="_blank">smart-elephant on GitHub</a>
+            </p>
+            <p style="margin-top: 20px; opacity: 0.8;">
+                Questions? Check out the <a href="#" onclick="showTab('overview'); return false;">Overview</a> 
+                or explore the <a href="#" onclick="showTab('chatmodes'); return false;">Chat Modes</a>
+            </p>
+        </footer>
+    </div>
+
+    <script>
+        // Tab switching
+        function showTab(tabName) {
+            // Hide all tabs
+            const tabs = document.querySelectorAll('.tab-content');
+            tabs.forEach(tab => tab.classList.remove('active'));
+
+            // Remove active class from all buttons
+            const buttons = document.querySelectorAll('.tab-button');
+            buttons.forEach(btn => btn.classList.remove('active'));
+
+            // Show selected tab
+            document.getElementById(tabName).classList.add('active');
+
+            // Add active class to clicked button
+            event.target.classList.add('active');
+
+            // Scroll to top
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // Toggle step details
+        function toggleStep(element) {
+            element.classList.toggle('expanded');
+        }
+
+        // Select workflow
+        function selectWorkflow(type) {
+            // Hide both workflows
+            document.getElementById('greenfield-workflow').style.display = 'none';
+            document.getElementById('brownfield-workflow').style.display = 'none';
+
+            // Remove selected class from all buttons
+            document.querySelectorAll('.workflow-btn').forEach(btn => {
+                btn.classList.remove('selected');
+            });
+
+            // Show selected workflow
+            document.getElementById(type + '-workflow').style.display = 'block';
+
+            // Add selected class to clicked button
+            event.target.closest('.workflow-btn').classList.add('selected');
+
+            // Reset progress
+            document.getElementById(type + '-progress').style.width = '0%';
+            document.getElementById(type + '-progress').textContent = '0%';
+
+            // Scroll to workflow
+            setTimeout(() => {
+                document.getElementById(type + '-workflow').scrollIntoView({ 
+                    behavior: 'smooth', 
+                    block: 'start' 
+                });
+            }, 100);
+        }
+
+        // Update progress bar
+        function updateProgress(type, step) {
+            const totalSteps = 7;
+            const percentage = Math.round((step / totalSteps) * 100);
+            const progressBar = document.getElementById(type + '-progress');
+            
+            setTimeout(() => {
+                progressBar.style.width = percentage + '%';
+                progressBar.textContent = percentage + '%';
+            }, 300);
+        }
+
+        // Simulate scenario
+        function simulateScenario() {
+            const selector = document.getElementById('scenario-selector');
+            const output = document.getElementById('simulation-output');
+            const scenario = selector.value;
+
+            if (!scenario) {
+                alert('Please select a scenario first!');
+                return;
+            }
+
+            const scenarios = {
+                blog: {
+                    title: '📝 Blog Platform',
+                    type: 'Greenfield',
+                    steps: [
+                        'Initialize repository structure',
+                        'Generate user stories: create posts, manage categories, comments',
+                        'Design components: Post, User, Comment, Category',
+                        'Create architecture: React frontend + Node.js API + MongoDB',
+                        'Implement services and models',
+                        'Build REST API endpoints',
+                        'Generate deployment code for AWS'
+                    ]
+                },
+                ecommerce: {
+                    title: '🛒 E-Commerce Store',
+                    type: 'Greenfield',
+                    steps: [
+                        'Initialize repository structure',
+                        'Generate user stories: browse products, cart, checkout, orders',
+                        'Design components: Product, Cart, Order, Payment, User',
+                        'Create architecture: Next.js frontend + Node.js API + PostgreSQL',
+                        'Implement services and models',
+                        'Build REST API endpoints',
+                        'Generate deployment code with payment gateway integration'
+                    ]
+                },
+                dashboard: {
+                    title: '📊 Analytics Dashboard',
+                    type: 'Greenfield',
+                    steps: [
+                        'Initialize repository structure',
+                        'Generate user stories: view metrics, create charts, export data',
+                        'Design components: Dashboard, Chart, DataSource, Report',
+                        'Create architecture: React + D3.js frontend + Python API + TimescaleDB',
+                        'Implement services and models',
+                        'Build REST API endpoints',
+                        'Generate deployment code for data pipeline'
+                    ]
+                },
+                chat: {
+                    title: '💬 Add Chat Feature',
+                    type: 'Brownfield',
+                    steps: [
+                        'Analyze existing application structure',
+                        'Generate enhancement stories: real-time messaging, presence',
+                        'Update domain models: add Chat and Message components',
+                        'Design architecture evolution: add WebSocket server + Redis',
+                        'Implement new services with existing app integration',
+                        'Extend API with WebSocket endpoints (keep REST for compatibility)',
+                        'Update deployment with blue-green strategy and rollback plan'
+                    ]
+                },
+                search: {
+                    title: '🔍 Add Search Feature',
+                    type: 'Brownfield',
+                    steps: [
+                        'Analyze existing data access patterns',
+                        'Generate enhancement stories: full-text search, filters, autocomplete',
+                        'Update domain models: add Search component',
+                        'Design architecture evolution: add Elasticsearch',
+                        'Implement search service with data indexing',
+                        'Create new API endpoints: /api/v2/search',
+                        'Update deployment to include Elasticsearch cluster'
+                    ]
+                }
+            };
+
+            const selected = scenarios[scenario];
+            
+            let html = `
+                <div class="example-output">
+                    <h3>${selected.title} (${selected.type})</h3>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: 100%;">Complete!</div>
+                    </div>
+                    <h4 style="margin-top: 20px;">Workflow Steps:</h4>
+                    <ol style="margin-left: 20px;">
+            `;
+
+            selected.steps.forEach((step, index) => {
+                html += `<li style="margin: 10px 0;">${step}</li>`;
+            });
+
+            html += `
+                    </ol>
+                    <div class="alert alert-success" style="margin-top: 20px;">
+                        <strong>✅ Success!</strong> This ${selected.type.toLowerCase()} project would be ready for deployment following the Smart Elephant workflow!
+                    </div>
+                </div>
+            `;
+
+            output.innerHTML = html;
+            output.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // Add some interactivity on load
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('🐘 Smart Elephant Interactive Guide Loaded!');
+            
+            // Add click analytics (for demo purposes)
+            document.querySelectorAll('.step').forEach(step => {
+                step.addEventListener('click', function() {
+                    console.log('Step clicked:', this.querySelector('.step-title').textContent);
+                });
+            });
+        });
+    </script>
+</body>
+</html>
